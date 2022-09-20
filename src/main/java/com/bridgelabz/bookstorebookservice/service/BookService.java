@@ -153,4 +153,13 @@ public class BookService implements IBookService {
         }
         return null;
     }
+
+    @Override
+    public Response verifyBook(Long id) {
+        Optional<BookServiceModel> isBookPresent = bookServiceRepository.findById(id);
+        if (isBookPresent.isPresent()) {
+            return new Response(200, "Book Found", isBookPresent.get());
+        }
+        throw new UserException(400, "Book NOt found With this id");
+    }
 }

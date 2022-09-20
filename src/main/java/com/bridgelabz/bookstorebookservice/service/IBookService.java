@@ -24,4 +24,6 @@ public interface IBookService {
     Response changeBookQuantity(Long id, String token, Long quantity);
 
     Response changeBookPrice(Long id, String token, Long price);
+
+    Response verifyBook(Long id);
 }

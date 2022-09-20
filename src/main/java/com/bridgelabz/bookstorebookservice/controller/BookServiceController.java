@@ -72,7 +72,7 @@ public class BookServiceController {
     @DeleteMapping("/deleteBook/{id}")
     public ResponseEntity<Response> deleteBook(@PathVariable Long id,
                                                @RequestHeader String token) {
-        Response response = bookService.deleteBook(id,token);
+        Response response = bookService.deleteBook(id, token);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -102,5 +102,15 @@ public class BookServiceController {
                                                     @RequestParam Long price) {
         Response response = bookService.changeBookPrice(id, token, price);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    /**
+     * Purpose :  Verify Book
+     *
+     * @author : Aviligonda Sreenivasulu
+     * @Param : id
+     */
+    @GetMapping("verifyBook/{id}")
+    public Response verifyBook(@PathVariable Long id) {
+        return bookService.verifyBook(id);
     }
 }
