@@ -114,36 +114,6 @@ public class BookService implements IBookService {
     }
 
     /**
-     * Purpose : Implement the Logic of changeBookQuantity
-     *
-     * @author : Aviligonda Sreenivasulu
-     * @Param :  quantity,id,token
-     */
-    @Override
-    public Response changeBookQuantity(Long bookId, String token, Long cartId) {
-        Response isUserPresent = restTemplate.getForObject("http://BS-USER-SERVICE:8080/userService/userVerification/" + token, Response.class);
-        if (isUserPresent.getStatusCode() == 200) {
-            Optional<BookServiceModel> isBookPresent = bookServiceRepository.findById(bookId);
-            if (isBookPresent.isPresent()) {
-                CartResponse isCartPresent = restTemplate.getForObject("http://BS-CART-SERVICE:8082/cartService/verifyCartItem/" + cartId, CartResponse.class);
-                if (isUserPresent.getStatusCode() == 200) {
-                    if (isBookPresent.get().getId() == isCartPresent.getObject().getBookId()) {
-                        Long quantity = isBookPresent.get().getBookQuantity() - isCartPresent.getObject().getQuantity();
-                        isBookPresent.get().setBookQuantity(quantity);
-                    } else {
-                        throw new UserException(400, "BookId Did't Match with Cart in BookId");
-                    }
-                    bookServiceRepository.save(isBookPresent.get());
-                    return new Response(200, "Success", isBookPresent.get());
-                }
-                throw new UserException(400, "No Cart itemound with this ID");
-            }
-            throw new UserException(400, "No Book found  with this ID");
-        }
-        return null;
-    }
-
-    /**
      * Purpose : Implement the Logic of changeBookPrice
      *
      * @author : Aviligonda Sreenivasulu
@@ -177,5 +147,42 @@ public class BookService implements IBookService {
             return new Response(200, "Book Found", isBookPresent.get());
         }
         throw new UserException(400, "Book NOt found With this id");
+    }
+
+    /**
+     * Purpose : Implement the Logic of changeBookQuantity when add book in cart
+     *
+     * @author : Aviligonda Sreenivasulu
+     * @Param :  id,bookId
+     */
+
+    @Override
+    public Response changeBookQuantity(Long quantity, Long bookId) {
+        Optional<BookServiceModel> isBookPresent = bookServiceRepository.findById(bookId);
+        if (isBookPresent.isPresent()) {
+            Long bookQuantity = isBookPresent.get().getBookQuantity() - quantity;
+            isBookPresent.get().setBookQuantity(bookQuantity);
+            bookServiceRepository.save(isBookPresent.get());
+            return new Response(200, "Success", isBookPresent.get());
+        }
+        throw new UserException(400, "No Book Found With This ID");
+    }
+
+    /**
+     * Purpose : Implement the Logic of changeBookQuantity when removing book in cart
+     *
+     * @author : Aviligonda Sreenivasulu
+     * @Param :  id,bookId
+     */
+    @Override
+    public Response changeBookQuantity1(Long quantity, Long bookId) {
+        Optional<BookServiceModel> isBookPresent = bookServiceRepository.findById(bookId);
+        if (isBookPresent.isPresent()) {
+            Long bookQuantity = isBookPresent.get().getBookQuantity() + quantity;
+            isBookPresent.get().setBookQuantity(bookQuantity);
+            bookServiceRepository.save(isBookPresent.get());
+            return new Response(200, "Success", isBookPresent.get());
+        }
+        throw new UserException(400, "No Book Found With This ID");
     }
 }

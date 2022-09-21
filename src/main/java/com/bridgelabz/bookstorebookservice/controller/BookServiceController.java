@@ -77,20 +77,6 @@ public class BookServiceController {
     }
 
     /**
-     * Purpose :  Change Book Quantity
-     *
-     * @author : Aviligonda Sreenivasulu
-     * @Param : token,quantity,id
-     */
-    @PutMapping("/changeBookQuantity/{bookId}")
-    public ResponseEntity<Response> changeBookQuantity(@PathVariable Long bookId,
-                                                       @RequestHeader String token,
-                                                       @RequestParam Long cartId) {
-        Response response = bookService.changeBookQuantity(bookId, token, cartId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    /**
      * Purpose :  Change Book price
      *
      * @author : Aviligonda Sreenivasulu
@@ -103,6 +89,7 @@ public class BookServiceController {
         Response response = bookService.changeBookPrice(id, token, price);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
     /**
      * Purpose :  Verify Book
      *
@@ -114,4 +101,28 @@ public class BookServiceController {
         return bookService.verifyBook(id);
     }
 
+    /**
+     * Purpose :  changeBookQuantity when Add book in cart
+     *
+     * @author : Aviligonda Sreenivasulu
+     * @Param : bookId,quantity
+     */
+    @GetMapping("/changeBookQuantity/{quantity}/{bookId}")
+    public Response changeBookQuantity(@PathVariable Long quantity,
+                                       @PathVariable Long bookId) {
+        return bookService.changeBookQuantity(quantity, bookId);
+    }
+
+    /**
+     * Purpose :  changeBookQuantity when removing book in cart
+     *
+     * @author : Aviligonda Sreenivasulu
+     * @Param : bookId,quantity
+     */
+    @GetMapping("/changeBookQuantity1/{quantity}/{bookId}")
+    public Response changeBookQuantity1(@PathVariable Long quantity,
+                                        @PathVariable Long bookId) {
+        return bookService.changeBookQuantity1(quantity, bookId);
+
+    }
 }

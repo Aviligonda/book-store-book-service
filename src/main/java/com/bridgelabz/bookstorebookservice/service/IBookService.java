@@ -21,9 +21,11 @@ public interface IBookService {
 
     Response deleteBook(Long id, String token);
 
-    Response changeBookQuantity(Long bookId, String token, Long cartId);
-
     Response changeBookPrice(Long id, String token, Long price);
 
     Response verifyBook(Long id);
+
+    Response changeBookQuantity(Long quantity, Long bookId);
+
+    Response changeBookQuantity1(Long quantity, Long bookId);
 }
