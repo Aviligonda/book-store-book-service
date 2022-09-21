@@ -4,6 +4,7 @@ import com.bridgelabz.bookstorebookservice.dto.BookServiceDTO;
 import com.bridgelabz.bookstorebookservice.exception.UserException;
 import com.bridgelabz.bookstorebookservice.model.BookServiceModel;
 import com.bridgelabz.bookstorebookservice.repository.BookServiceRepository;
+import com.bridgelabz.bookstorebookservice.util.CartResponse;
 import com.bridgelabz.bookstorebookservice.util.Response;
 import com.bridgelabz.bookstorebookservice.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,13 +58,13 @@ public class BookService implements IBookService {
      * @Param :  bookServiceDTO,token,id
      */
     @Override
-    public Response updateBook(Long id, String token, BookServiceDTO bookServiceDTO) {
+    public Response updateBook(Long id, String token, Long bookQuantity) {
         Response isUserPresent = restTemplate.getForObject("http://BS-USER-SERVICE:8080/userService/userVerification/" + token, Response.class);
         if (isUserPresent.getStatusCode() == 200) {
             Optional<BookServiceModel> isBookPresent = bookServiceRepository.findById(id);
             if (isBookPresent.isPresent()) {
-                isBookPresent.get().setBookName(bookServiceDTO.getBookName());
-                isBookPresent.get().setAuthor(bookServiceDTO.getAuthor());
+                Long quantity = isBookPresent.get().getBookQuantity() + bookQuantity;
+                isBookPresent.get().setBookQuantity(quantity);
                 isBookPresent.get().setUpdatedTime(LocalDateTime.now());
                 bookServiceRepository.save(isBookPresent.get());
                 return new Response(200, "Success", isBookPresent.get());
@@ -119,16 +120,25 @@ public class BookService implements IBookService {
      * @Param :  quantity,id,token
      */
     @Override
-    public Response changeBookQuantity(Long id, String token, Long quantity) {
+    public Response changeBookQuantity(Long bookId, String token, Long cartId) {
         Response isUserPresent = restTemplate.getForObject("http://BS-USER-SERVICE:8080/userService/userVerification/" + token, Response.class);
         if (isUserPresent.getStatusCode() == 200) {
-            Optional<BookServiceModel> isBookPresent = bookServiceRepository.findById(id);
+            Optional<BookServiceModel> isBookPresent = bookServiceRepository.findById(bookId);
             if (isBookPresent.isPresent()) {
-                isBookPresent.get().setBookQuantity(quantity);
-                bookServiceRepository.save(isBookPresent.get());
-                return new Response(200, "Success", isBookPresent.get());
+                CartResponse isCartPresent = restTemplate.getForObject("http://BS-CART-SERVICE:8082/cartService/verifyCartItem/" + cartId, CartResponse.class);
+                if (isUserPresent.getStatusCode() == 200) {
+                    if (isBookPresent.get().getId() == isCartPresent.getObject().getBookId()) {
+                        Long quantity = isBookPresent.get().getBookQuantity() - isCartPresent.getObject().getQuantity();
+                        isBookPresent.get().setBookQuantity(quantity);
+                    } else {
+                        throw new UserException(400, "BookId Did't Match with Cart in BookId");
+                    }
+                    bookServiceRepository.save(isBookPresent.get());
+                    return new Response(200, "Success", isBookPresent.get());
+                }
+                throw new UserException(400, "No Cart itemound with this ID");
             }
-            throw new UserException(400, "No Book Found with this ID");
+            throw new UserException(400, "No Book found  with this ID");
         }
         return null;
     }
@@ -154,6 +164,12 @@ public class BookService implements IBookService {
         return null;
     }
 
+    /**
+     * Purpose : Implement the Logic of verify Book
+     *
+     * @author : Aviligonda Sreenivasulu
+     * @Param :  id
+     */
     @Override
     public Response verifyBook(Long id) {
         Optional<BookServiceModel> isBookPresent = bookServiceRepository.findById(id);

@@ -46,8 +46,8 @@ public class BookServiceController {
     @PutMapping("/updateBook/{id}")
     public ResponseEntity<Response> updateBook(@PathVariable Long id,
                                                @RequestHeader String token,
-                                               @Valid @RequestBody BookServiceDTO bookServiceDTO) {
-        Response response = bookService.updateBook(id, token, bookServiceDTO);
+                                               @RequestParam Long bookQuantity) {
+        Response response = bookService.updateBook(id, token, bookQuantity);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -82,11 +82,11 @@ public class BookServiceController {
      * @author : Aviligonda Sreenivasulu
      * @Param : token,quantity,id
      */
-    @PutMapping("/changeBookQuantity/{id}")
-    public ResponseEntity<Response> changeBookQuantity(@PathVariable Long id,
+    @PutMapping("/changeBookQuantity/{bookId}")
+    public ResponseEntity<Response> changeBookQuantity(@PathVariable Long bookId,
                                                        @RequestHeader String token,
-                                                       @RequestParam Long quantity) {
-        Response response = bookService.changeBookQuantity(id, token, quantity);
+                                                       @RequestParam Long cartId) {
+        Response response = bookService.changeBookQuantity(bookId, token, cartId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -113,4 +113,5 @@ public class BookServiceController {
     public Response verifyBook(@PathVariable Long id) {
         return bookService.verifyBook(id);
     }
+
 }

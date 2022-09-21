@@ -15,13 +15,13 @@ import java.util.List;
 public interface IBookService {
     Response createBook(String token, BookServiceDTO bookServiceDTO);
 
-    Response updateBook(Long id, String token, BookServiceDTO bookServiceDTO);
+    Response updateBook(Long id, String token, Long bookQuantity);
 
     List<BookServiceModel> getAllBooks(String token);
 
     Response deleteBook(Long id, String token);
 
-    Response changeBookQuantity(Long id, String token, Long quantity);
+    Response changeBookQuantity(Long bookId, String token, Long cartId);
 
     Response changeBookPrice(Long id, String token, Long price);
 
