@@ -41,7 +41,7 @@ public class BookService implements IBookService {
      */
     @Override
     public Response createBook(String token, BookServiceDTO bookServiceDTO) {
-        Response isUserPresent = restTemplate.getForObject("http://BS-USER-SERVICE:8081/userService/userVerification/" + token, Response.class);
+        Response isUserPresent = restTemplate.getForObject("http://BS-USER-SERVICE:8080/userService/userVerification/" + token, Response.class);
         if (isUserPresent.getStatusCode() == 200) {
             BookServiceModel bookServiceModel = new BookServiceModel(bookServiceDTO);
             bookServiceModel.setCreationTime(LocalDateTime.now());
