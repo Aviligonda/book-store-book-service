@@ -125,4 +125,30 @@ public class BookServiceController {
         return bookService.changeBookQuantity1(quantity, bookId);
 
     }
+
+    /**
+     * Purpose : search By BookName
+     *
+     * @author : Aviligonda Sreenivasulu
+     * @Param : bookName
+     */
+    @GetMapping("/searchByBookName/{bookName}")
+    public ResponseEntity<List<?>> searchByBookName(@PathVariable String bookName,
+                                                    @RequestHeader String token) {
+        List<BookServiceModel> response = bookService.searchByBookName(bookName,token);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * Purpose : search a Book by author name
+     *
+     * @author : Aviligonda Sreenivasulu
+     * @Param : authorName
+     */
+    @GetMapping("/searchBookByAuthor/{authorName}")
+    public ResponseEntity<List<?>> searchBookByAuthor(@PathVariable String authorName,
+                                                      @RequestHeader String token) {
+        List<BookServiceModel> response = bookService.searchBookByAuthor(authorName,token);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

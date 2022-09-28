@@ -4,7 +4,6 @@ import com.bridgelabz.bookstorebookservice.dto.BookServiceDTO;
 import com.bridgelabz.bookstorebookservice.exception.UserException;
 import com.bridgelabz.bookstorebookservice.model.BookServiceModel;
 import com.bridgelabz.bookstorebookservice.repository.BookServiceRepository;
-import com.bridgelabz.bookstorebookservice.util.CartResponse;
 import com.bridgelabz.bookstorebookservice.util.Response;
 import com.bridgelabz.bookstorebookservice.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -185,4 +184,43 @@ public class BookService implements IBookService {
         }
         throw new UserException(400, "No Book Found With This ID");
     }
+
+    /**
+     * Purpose : Implement the Logic of Search By Book name
+     *
+     * @author : Aviligonda Sreenivasulu
+     * @Param :  boookName
+     */
+    @Override
+    public List<BookServiceModel> searchByBookName(String bookName, String token) {
+        Response isUserPresent = restTemplate.getForObject("http://BS-USER-SERVICE:8080/userService/userVerification/" + token, Response.class);
+        if (isUserPresent.getStatusCode() == 200) {
+            List<BookServiceModel> isBookPresent = bookServiceRepository.findByBookNameContainsIgnoreCase(bookName);
+            if (isBookPresent.size() > 0) {
+                return isBookPresent;
+            }
+            throw new UserException(400, "No book found with this name");
+        }
+        return null;
+    }
+
+    /**
+     * Purpose : Implement the Logic of Search a book by Author name
+     *
+     * @author : Aviligonda Sreenivasulu
+     * @Param :  authorName
+     */
+    @Override
+    public List<BookServiceModel> searchBookByAuthor(String authorName, String token) {
+        Response isUserPresent = restTemplate.getForObject("http://BS-USER-SERVICE:8080/userService/userVerification/" + token, Response.class);
+        if (isUserPresent.getStatusCode() == 200) {
+            List<BookServiceModel> isBookPresent = bookServiceRepository.findByAuthorContainsIgnoreCase(authorName);
+            if (isBookPresent.size() > 0) {
+                return isBookPresent;
+            }
+            throw new UserException(400, "No book found with this Author Name");
+        }
+        return null;
+    }
+
 }

@@ -28,4 +28,8 @@ public interface IBookService {
     Response changeBookQuantity(Long quantity, Long bookId);
 
     Response changeBookQuantity1(Long quantity, Long bookId);
+
+    List<BookServiceModel> searchBookByAuthor(String authorName, String token);
+
+    List<BookServiceModel> searchByBookName(String bookName, String token);
 }
